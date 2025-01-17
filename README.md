@@ -23,7 +23,7 @@ Sometimes you've got a new game to play and you realize: no batteries included ð
 
 - I would be happy if can report it opening an [issue](https://github.com/fbarresi/batteries/issues/new?template=Blank+issue)
 
-## Did you have a great idea or found out something missing?
+## Do you have a great idea or realize something missing?
 
 - Feel free to contibute (with fork and pull/request)
 - Get in touch with me with a new [discussion](https://github.com/fbarresi/Sharp7/discussions/new?category=ideas)
