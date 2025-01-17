@@ -11,6 +11,8 @@
         <PackageProjectUrl>https://github.com/fbarresi/batteries</PackageProjectUrl>
         <PackageLicenseUrl>https://github.com/fbarresi/batteries/blob/main/LICENSE</PackageLicenseUrl>
         <RepositoryUrl>https://github.com/fbarresi/batteries</RepositoryUrl>
+        <Description>opinionated collection of useful code</Description>
+        <RepositoryType>git</RepositoryType>
     </PropertyGroup>
 
 </Project>
