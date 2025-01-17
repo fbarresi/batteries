@@ -4,6 +4,13 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Title>batteries</Title>
+        <Authors>Federico Barresi</Authors>
+        <Copyright>2025 - fbarresi</Copyright>
+        <PackageProjectUrl>https://github.com/fbarresi/batteries</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/fbarresi/batteries/blob/main/LICENSE</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/fbarresi/batteries</RepositoryUrl>
     </PropertyGroup>
 
 </Project>

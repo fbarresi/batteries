@@ -2,6 +2,13 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "batteries", "batteries\batteries.csproj", "{660CAB24-5C25-41AC-AD78-0599D0B541FA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build Pipeline", "Build Pipeline", "{8D7A31EE-5321-4EA0-A930-0F64E176E5B3}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\build-pipeline.yml = .github\workflows\build-pipeline.yml
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "batteries.Tests", "batteries.Tests\batteries.Tests.csproj", "{BA7CC679-ED5B-49A2-BF09-6153765F8183}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +19,9 @@ Global
 		{660CAB24-5C25-41AC-AD78-0599D0B541FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{660CAB24-5C25-41AC-AD78-0599D0B541FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{660CAB24-5C25-41AC-AD78-0599D0B541FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA7CC679-ED5B-49A2-BF09-6153765F8183}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA7CC679-ED5B-49A2-BF09-6153765F8183}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA7CC679-ED5B-49A2-BF09-6153765F8183}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA7CC679-ED5B-49A2-BF09-6153765F8183}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
