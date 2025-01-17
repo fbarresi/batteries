@@ -27,6 +27,11 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release --no-restore /p:version=${{ env.version }}
       - name: Test
-        run: dotnet test --no-build --verbosity normal
+        run: dotnet test --verbosity normal
+      - name: Publish NuGet package
+        run: |
+          foreach($file in (Get-ChildItem . -Recurse -Include *.nupkg)) {
+              dotnet nuget push $file --api-key "${{ secrets.NUGET_DEPLOY_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
+          }
 
       
