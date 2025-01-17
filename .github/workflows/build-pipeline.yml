@@ -3,7 +3,7 @@ name: CI/CD
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
     paths-ignore:
       - '**/README.md'
   pull_request:
@@ -13,12 +13,20 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
+    runs-on: windows-latest
+    env:
+      version: 1.0.${{ github.run_number }}${{ github.ref != 'refs/heads/main' && '-prerelease' || '' }}
     steps:
       - uses: actions/checkout@v4
-
-      - name: Run a one-line script
-        run: echo Hello, world!
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --configuration Release --no-restore /p:version=${{ env.version }}
+      - name: Test
+        run: dotnet test --no-build --verbosity normal
 
       
