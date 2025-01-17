@@ -2,6 +2,7 @@
 
 This is a personal and opinionated collection of packages with useful code.
 
+[![CI/CD](https://github.com/fbarresi/batteries/actions/workflows/build-pipeline.yml/badge.svg)](https://github.com/fbarresi/batteries/actions/workflows/build-pipeline.yml)
 ![Licence](https://img.shields.io/github/license/fbarresi/batteries.svg)
 
 Sometimes you've got a new game to play and you realize: no batteries included 😩
