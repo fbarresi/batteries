@@ -1,4 +1,4 @@
-# batteries
+# batteries 🔋🔋
 
 This is a personal and opinionated collection of packages with useful code.
 
@@ -6,7 +6,7 @@ This is a personal and opinionated collection of packages with useful code.
 ![Licence](https://img.shields.io/github/license/fbarresi/batteries.svg)
 
 Sometimes you've got a new game to play and you realize: no batteries included 😩
-From now on, you just need to use batteries!
+<br/>From now on, you just need to use batteries!
 
 ## Usage
 
