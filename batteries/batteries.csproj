@@ -13,6 +13,7 @@
         <RepositoryUrl>https://github.com/fbarresi/batteries</RepositoryUrl>
         <Description>opinionated collection of useful code</Description>
         <RepositoryType>git</RepositoryType>
+        <PackageIconUrl>https://raw.githubusercontent.com/gammasoft/fatcow/refs/heads/master/32x32/battery_charge.png</PackageIconUrl>
     </PropertyGroup>
 
 </Project>
