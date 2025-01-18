@@ -1,5 +1,5 @@
-# batteries 🔋🔋
-
+# batteries ![logo](https://raw.githubusercontent.com/gammasoft/fatcow/refs/heads/master/32x32/battery_charge.png)
+ 
 This is a personal and opinionated collection of packages with useful code.
 
 [![CI/CD](https://github.com/fbarresi/batteries/actions/workflows/build-pipeline.yml/badge.svg)](https://github.com/fbarresi/batteries/actions/workflows/build-pipeline.yml)
