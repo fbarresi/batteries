@@ -90,7 +90,7 @@ Here is how to use it:
         "Password": "artemis",
         "DefaultDestination": "topic://fancytopic"
       }
-   }
+   
    ````
 3. Add the background service
     ````csharp
