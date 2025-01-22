@@ -1,5 +1,7 @@
 ﻿# batteries.Apache.NMS ![logo](https://raw.githubusercontent.com/gammasoft/fatcow/refs/heads/master/32x32/battery_charge.png)
 
+[![NuGet Version](https://img.shields.io/nuget/vpre/batteries.Apache.NMS)](https://www.nuget.org/packages/batteries.Apache.NMS)
+
 ## Description
 
 This package contains useful implementations of message bus services based on apache NMS.
