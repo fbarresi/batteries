@@ -1,3 +1,6 @@
+using System.Reactive;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using batteries.Apache.NMS.Interfaces;
 using batteries.Apache.NMS.Settings;
 using Microsoft.Extensions.Hosting;
@@ -12,6 +15,7 @@ public class MessageBusManagerService : BackgroundService, IBusManager
     private readonly BusManagerSettings settings;
     private readonly Dictionary<string, MessageBus> connections = new();
 
+    private readonly BehaviorSubject<bool> initializeSubject = new(false);
     public override void Dispose()
     {
         foreach (var connection in connections)
@@ -19,6 +23,7 @@ public class MessageBusManagerService : BackgroundService, IBusManager
             connection.Value.Dispose();
         }
         connections.Clear();
+        initializeSubject.Dispose();
         base.Dispose();
     }
 
@@ -45,14 +50,16 @@ public class MessageBusManagerService : BackgroundService, IBusManager
 
         var startTasks = connections.Select(c => c.Value.StartAsync(cancellationToken)).ToArray();
         Task.WaitAll(startTasks, cancellationToken);
+        initializeSubject.OnNext(true);
 
         return base.StartAsync(cancellationToken);
     }
 
     public override Task StopAsync(CancellationToken cancellationToken)
     {
-        var startTasks = connections.Select(c => c.Value.StopAsync(cancellationToken)).ToArray();
-        Task.WaitAll(startTasks, cancellationToken);
+        initializeSubject.OnNext(false);
+        var stopTasks = connections.Select(c => c.Value.StopAsync(cancellationToken)).ToArray();
+        Task.WaitAll(stopTasks, cancellationToken);
         return base.StopAsync(cancellationToken);
     }
 
@@ -83,5 +90,6 @@ public class MessageBusManagerService : BackgroundService, IBusManager
         return destination;
     }
 
-    public Dictionary<string, bool> States => connections.ToDictionary(pair => pair.Key, pair => pair.Value.Running);
+    public Dictionary<string, bool> States => connections.ToDictionary(pair => pair.Key, pair => pair.Value.IsRunning);
+    public IObservable<bool> Initialized => initializeSubject.AsObservable();
 }

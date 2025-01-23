@@ -32,6 +32,7 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
         reconnectSubject
             .StartWith(Unit.Default)
             .Throttle(TimeSpan.FromSeconds(3))
+            .Do(_ => connectionSubject.OnNext(false))
             .Do(_ => CreateConnection())
             .LogAndRetryAfterDelay(logger, TimeSpan.FromSeconds(5), "Error while creating connection")
             .Subscribe()
@@ -62,15 +63,16 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
     private IMessageProducer defaultProducer;
     private readonly Subject<Unit> reconnectSubject = new();
     private readonly CompositeDisposable disposables = new();
-
-    public bool Running => connection?.IsStarted ?? false;
+    private readonly BehaviorSubject<bool> connectionSubject = new(false);
+    public bool IsRunning => connection?.IsStarted ?? false;
+    public IObservable<bool> Connected => connectionSubject.AsObservable();
     
     public MessageBus(ILogger<MessageBus> logger, MessageBusSessionSettings settings)
     {
         this.logger = logger;
         this.settings = settings;
-        
-        
+        reconnectSubject.AddDisposableTo(disposables);
+        connectionSubject.AddDisposableTo(disposables);
     }
     
     private void CreateConnection()
@@ -88,6 +90,7 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
             CreateDefaultProducer();
             connection.Start();
             logger.LogInformation("Connection for message bus {Name} started!", settings.Name);
+            connectionSubject.OnNext(true);
         }
         catch (Exception e)
         {
@@ -197,7 +200,11 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
                 .SelectMany(_ => consumer.ReceiveAsync())
                 .Select(m => (m as T))
                 .Repeat()
-                .Subscribe(obs.OnNext!, obs.OnError, obs.OnCompleted)
+                .Subscribe(obs.OnNext!, e =>
+                {
+                    reconnectSubject.OnNext(Unit.Default);
+                    obs.OnError(e);
+                }, obs.OnCompleted)
                 .AddDisposableTo(disposables);
             
             return disposable;
