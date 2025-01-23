@@ -33,7 +33,7 @@ missing extensions in `system.reactive`
 
 ### TimeSpan
 
-- AtLeas : sometimes you simply want to make sure nobody attempt to pass `TimeSpan.Zero`
+- AtLeast : sometimes you simply want to make sure nobody attempt to pass `TimeSpan.Zero`
 
 ### Url
 
