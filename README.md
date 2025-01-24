@@ -11,10 +11,10 @@ Sometimes you've got a new game to play and you realize: no batteries included ð
 
 ## Usage
 
-| Package   | Documentation |
-| :-----    | :---          |
-| batteries | [README](https://github.com/fbarresi/batteries/tree/main/batteries)   |
-| batteries.Apache.NMS|[README](https://github.com/fbarresi/batteries/tree/main/batteries.Apache.NMS)|
+| Package   | Description | Documentation |
+| :-----    | :---        |:---           |
+| batteries | Extension methods for everyday usage| [README](https://github.com/fbarresi/batteries/tree/main/batteries)   |
+| batteries.Apache.NMS| Swiss knife for ActiveMQ (aka [artemis](https://activemq.apache.org/components/artemis/https://activemq.apache.org/components/artemis/))|[README](https://github.com/fbarresi/batteries/tree/main/batteries.Apache.NMS)|
 
 ## Do you like this project?
 
