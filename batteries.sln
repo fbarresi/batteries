@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "batteries.Tests", "batterie
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "batteries.Apache.NMS", "batteries.Apache.NMS\batteries.Apache.NMS.csproj", "{2CBEC33C-D650-4C2D-84AA-8CEA21CA2B62}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Playground", "Playground\Playground.csproj", "{BE51E486-3C73-41AE-A999-6D277317DC44}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "batteries.Email", "batteries.Email\batteries.Email.csproj", "{17F90E2A-D2CB-4C2A-96A8-96E98EE6BB10}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,5 +33,13 @@ Global
 		{2CBEC33C-D650-4C2D-84AA-8CEA21CA2B62}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2CBEC33C-D650-4C2D-84AA-8CEA21CA2B62}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2CBEC33C-D650-4C2D-84AA-8CEA21CA2B62}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE51E486-3C73-41AE-A999-6D277317DC44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE51E486-3C73-41AE-A999-6D277317DC44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE51E486-3C73-41AE-A999-6D277317DC44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE51E486-3C73-41AE-A999-6D277317DC44}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17F90E2A-D2CB-4C2A-96A8-96E98EE6BB10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17F90E2A-D2CB-4C2A-96A8-96E98EE6BB10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17F90E2A-D2CB-4C2A-96A8-96E98EE6BB10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17F90E2A-D2CB-4C2A-96A8-96E98EE6BB10}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

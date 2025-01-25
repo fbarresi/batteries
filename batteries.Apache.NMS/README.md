@@ -44,9 +44,7 @@ Here is how to use it:
 3. Add the background service
     ````csharp
     builder.Services.AddSingleton<MessageBusManagerService>();
-   
     builder.Services.AddSingleton<IHostedService, MessageBusManagerService>(serviceProvider => serviceProvider.GetService<MessageBusManagerService>());
-    
     builder.Services.AddSingleton<IBusManager, MessageBusManagerService>(serviceProvider => serviceProvider.GetService<MessageBusManagerService>());
     ````
 
@@ -97,9 +95,7 @@ Here is how to use it:
 3. Add the background service
     ````csharp
     builder.Services.AddSingleton<MessageBus>();
-   
     builder.Services.AddSingleton<IHostedService, MessageBus>(serviceProvider => serviceProvider.GetService<MessageBus>());
-    
     builder.Services.AddSingleton<IMessageBus, MessageBus>(serviceProvider => serviceProvider.GetService<MessageBus>());
     ````
 
