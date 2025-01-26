@@ -29,8 +29,8 @@ Here is how to use it:
     "Port": 465,
     "Username": "my-fancy-gmail-account@gmail.com",
     "Password": "xxxx xxxx xxxx xxxx",
-   "SenderAddress": "no-reply@no-mail.com",
-   "SenderName": "Fancy Service"
+    "SenderAddress": "no-reply@no-mail.com",
+    "SenderName": "Fancy Service"
    }
    ````
 3. Add the background service
