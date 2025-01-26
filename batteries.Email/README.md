@@ -58,4 +58,7 @@ Here is how to use it:
 
 ### OAuth2 (and MS Office 356)
 
+#### Preparation:
+Follow [this guide](https://github.com/jstedfast/MailKit/blob/master/ExchangeOAuth2.md#web-services) for granting mailbox permission to a serice principal.
+
 `todo`
