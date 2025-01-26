@@ -56,9 +56,9 @@ Here is how to use it:
    ```
 
 
-### OAuth2 (and MS Office 356)
+### OAuth2 and Microsoft Office 356
 
 #### Preparation:
-Follow [this guide](https://github.com/jstedfast/MailKit/blob/master/ExchangeOAuth2.md#web-services) for granting mailbox permission to a serice principal.
+Follow [this guide](https://github.com/jstedfast/MailKit/blob/master/ExchangeOAuth2.md#web-services) or the [official guide](https://learn.microsoft.com/en-us/exchange/client-developer/legacy-protocols/how-to-authenticate-an-imap-pop-smtp-application-by-using-oauth) for granting mailbox permission to a service principal.
 
 `todo`
