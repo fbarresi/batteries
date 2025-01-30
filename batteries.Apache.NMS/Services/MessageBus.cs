@@ -115,11 +115,14 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
 
     public Task Send(string destination, string message)
     {
+        return Send(destination, message, null);
+    }
+    public Task Send(string destination, string message, IDictionary<string, string>? properties)
+    {
         try
         {
-            var request = session.CreateTextMessage(message);
-            
-            request.NMSMessageId = Guid.NewGuid().ToString();
+            var request = CreateTextMessage(message, properties);
+
             if (destination.Equals(settings.DefaultDestination))
             {
                 defaultProducer.Send(request);
@@ -140,18 +143,53 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
         return Task.FromResult(true);
     }
 
+    private ITextMessage CreateTextMessage(string message, IDictionary<string, string>? properties)
+    {
+        var request = session.CreateTextMessage(message);
+
+        if (properties != null)
+        {
+            if (properties.Any())
+            {
+                foreach (var property in properties)
+                {
+                    request.Properties[property.Key] = property.Value;
+                }
+            }
+        }
+        request.NMSMessageId = Guid.NewGuid().ToString();
+
+        return request;
+    }
+
     public Task<string> Request(string destination, string message, bool useTempDestination, string replyDestination)
+    {
+        return Request(destination, message, null, useTempDestination, replyDestination);
+    }
+    public Task<string> Request(string destination, string message, IDictionary<string, string>? properties, bool useTempDestination, string replyDestination)
     {
         using var replyDest = GetDestination(useTempDestination, replyDestination);
         try
         {
-            var request = session.CreateTextMessage(message);
-            request.NMSMessageId = Guid.NewGuid().ToString();
+            var request = CreateTextMessage(message, properties);
+            
             request.NMSReplyTo = replyDest;
+            
             using var consumer = session.CreateConsumer(replyDest);
             
             logger.LogInformation("Sending message with ID: {MessageId} and ReplyTo: {ReplyTo}", request?.NMSMessageId, replyDest);
-            defaultProducer.Send(request);
+            
+            if (destination.Equals(settings.DefaultDestination))
+            {
+                defaultProducer.Send(request);
+            }
+            else
+            {
+                using var messageProducer = GetProducer(destination);
+                messageProducer.Send(request);
+                messageProducer.Close();
+            }
+            
             var reply = consumer.Receive(settings.RequestTimeout);
             logger.LogInformation("Received message with ID: {MessageId}", reply?.NMSMessageId);
             var textReply = (reply as ITextMessage)?.Text;
@@ -184,8 +222,8 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
             }
         }
     }
-    
-    public IObservable<T?> Consume<T>(string destination) where T : class, IMessage
+
+    public IObservable<T?> Consume<T>(string destination, string selector) where T : class, IMessage
     {
         return Observable.Create<T>(obs =>
         {
@@ -193,7 +231,7 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
             
             var dest = SessionUtil.GetDestination(session, destination);
             dest.AddDisposableTo(disposable);
-            var consumer = session.CreateConsumer(dest);
+            var consumer = session.CreateConsumer(dest, selector);
             consumer.AddDisposableTo(disposable);
 
             Observable.Return(Unit.Default)
@@ -209,6 +247,11 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
             
             return disposable;
         });
+    }
+    
+    public IObservable<T?> Consume<T>(string destination) where T : class, IMessage
+    {
+        return Consume<T>(destination, string.Empty);
     }
 
     private IDestination GetDestination(bool useTemp, string destination)
