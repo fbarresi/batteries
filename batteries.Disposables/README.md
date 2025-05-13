@@ -1,4 +1,4 @@
-﻿# batteries.Email ![logo](https://raw.githubusercontent.com/gammasoft/fatcow/refs/heads/master/32x32/battery_charge.png)
+﻿# batteries.Disposables ![logo](https://raw.githubusercontent.com/gammasoft/fatcow/refs/heads/master/32x32/battery_charge.png)
 
 [![NuGet Version](https://img.shields.io/nuget/vpre/batteries.Disposables)](https://www.nuget.org/packages/batteries.Disposables)
 
