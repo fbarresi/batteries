@@ -16,6 +16,7 @@ Sometimes you've got a new game to play and you realize: no batteries included ð
 | batteries | Extension methods for everyday usage| [README](https://github.com/fbarresi/batteries/tree/main/batteries)   |
 | batteries.Apache.NMS| Swiss knife for ActiveMQ (aka [artemis](https://activemq.apache.org/components/artemis/https://activemq.apache.org/components/artemis/))|[README](https://github.com/fbarresi/batteries/tree/main/batteries.Apache.NMS)|
 | batteries.Email| Services for sending emails|[README](https://github.com/fbarresi/batteries/tree/main/batteries.Email)|
+| batteries.Disposables| useful disposable implementation based on [System.Reactive](https://github.com/dotnet/reactive)|[README](https://github.com/fbarresi/batteries/tree/main/batteries.Disposables)|
 
 ## Do you like this project?
 
