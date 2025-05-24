@@ -30,14 +30,13 @@ Here is how to use it:
     "Username": "my-fancy-gmail-account@gmail.com",
     "Password": "xxxx xxxx xxxx xxxx",
     "SenderAddress": "no-reply@no-mail.com",
-    "SenderName": "Fancy Service"
+    "SenderName": "Fancy Service",
+    "UseSsl": true,
    }
    ````
 3. Add the background service
     ````csharp
-    builder.Services.AddSingleton<SmtpEmailService>();
-    builder.Services.AddSingleton<IHostedService, SmtpEmailService>(serviceProvider => serviceProvider.GetService<SmtpEmailService>());
-    builder.Services.AddSingleton<IEmailSender, SmtpEmailService>(serviceProvider => serviceProvider.GetService<SmtpEmailService>());
+    builder.Services.AddSingleton<IEmailSender, SmtpEmailService>();
     ````
 
 4. Inject the service (for example in one controller)

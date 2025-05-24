@@ -14,11 +14,14 @@ public class SmtpEmailService : IEmailSender
         this.settings = settings;
     }
     
-    public async Task SendEmailAsync(string recipient, string subject, string htmlMessage)
+    public Task SendEmailAsync(string recipient, string subject, string htmlMessage)
+     => SendEmailAsync(new []{recipient}, subject, htmlMessage);
+    
+    public async Task SendEmailAsync(string[] recipients, string subject, string htmlMessage)
     {
         var message = new MimeMessage ();
         message.From.Add (new MailboxAddress (settings.SenderName, settings.SenderAddress));
-        message.To.Add (new MailboxAddress (recipient, recipient));
+        message.To.AddRange (recipients.Select(recipient => new MailboxAddress (recipient, recipient)));
         message.Subject = subject;
 
         message.Body = new TextPart ("html")
