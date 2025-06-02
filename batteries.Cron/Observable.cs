@@ -14,4 +14,5 @@ public static class Observable
         return System.Reactive.Linq.Observable.Generate(0, d => true, d => d + 1, d => d,
             d => new DateTimeOffset(schedule.GetNextOccurrence(scheduler.Now.UtcDateTime)), scheduler);
     }
+    public static IObservable<int> Cron(string cron) => Cron(cron, Scheduler.Default);
 }

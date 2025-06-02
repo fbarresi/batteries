@@ -10,8 +10,8 @@ This package contains a useful extension for scheduling observable like crontab 
 
 Here is how to use it:
 
- ````csharp
-var subscription = Observable.Cron("*/5 * * * *", Scheduler.CurrentThread)
+````csharp
+var subscription = Observable.Cron("*/5 * * * *")
             .Do(_ => Console.WriteLine("triggering timebased execution!"))
             .Subscribe();
 ````
