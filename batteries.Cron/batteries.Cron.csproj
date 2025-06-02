@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Title>batteries.Cron</Title>
+        <Authors>Federico Barresi</Authors>
+        <Copyright>2025 - fbarresi</Copyright>
+        <PackageProjectUrl>https://github.com/fbarresi/batteries</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/fbarresi/batteries/blob/main/LICENSE</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/fbarresi/batteries</RepositoryUrl>
+        <Description>opinionated collection of useful code</Description>
+        <RepositoryType>git</RepositoryType>
+        <PackageIcon>icon.png</PackageIcon>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="..\assets\icon.png">
+            <Pack>True</Pack>
+            <PackagePath></PackagePath>
+            <Link>icon.png</Link>
+        </None>
+        <None Include="README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="System.Reactive" Version="6.0.1" />
+      <PackageReference Include="NCrontab" Version="3.3.3" />
+    </ItemGroup>
+
+</Project>
