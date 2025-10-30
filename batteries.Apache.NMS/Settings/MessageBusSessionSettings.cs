@@ -10,7 +10,7 @@ namespace batteries.Apache.NMS.Settings
         /// <summary>
         /// Persistent = 0 ; NonPersistent = 1
         /// </summary>
-        public int DeliveryMode { get; set; } = 1;
+        public int DeliveryMode { get; set; } = 0;
         public TimeSpan RequestTimeout { get; set; } = TimeSpan.FromSeconds(5);
     }
 }
