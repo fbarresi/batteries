@@ -119,18 +119,22 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
     }
     public Task Send(string destination, string message, IDictionary<string, string>? properties)
     {
+        var request = CreateTextMessage(message, properties);
+        return Send(destination, request);
+    }
+
+    public Task Send<T>(string destination, T message) where T : class, IMessage
+    {
         try
         {
-            var request = CreateTextMessage(message, properties);
-
             if (destination.Equals(settings.DefaultDestination))
             {
-                defaultProducer.Send(request);
+                defaultProducer.Send(message);
             }
             else
             {
                 using var messageProducer = GetProducer(destination);
-                messageProducer.Send(request);
+                messageProducer.Send(message);
                 messageProducer.Close();
             }
         }
@@ -162,31 +166,37 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
         return request;
     }
 
-    public Task<string> Request(string destination, string message, bool useTempDestination, string replyDestination)
+    public Task<string?> Request(string destination, string message, bool useTempDestination, string replyDestination)
     {
         return Request(destination, message, null, useTempDestination, replyDestination);
     }
-    public Task<string> Request(string destination, string message, IDictionary<string, string>? properties, bool useTempDestination, string replyDestination)
+    public async Task<string?> Request(string destination, string message, IDictionary<string, string>? properties, bool useTempDestination, string replyDestination)
+    {
+        
+        var request = CreateTextMessage(message, properties);
+        var reply = await Request<ITextMessage, ITextMessage>(destination, request, useTempDestination, replyDestination);
+        return reply?.Text;
+    }
+
+    public Task<TOut?> Request<TIn, TOut>(string destination, TIn message, bool useTempDestination, string replyDestination) where TIn : class, IMessage where TOut : class, IMessage
     {
         using var replyDest = GetDestination(useTempDestination, replyDestination);
         try
         {
-            var request = CreateTextMessage(message, properties);
-            
-            request.NMSReplyTo = replyDest;
+            message.NMSReplyTo = replyDest;
             
             using var consumer = session.CreateConsumer(replyDest);
             
-            logger.LogInformation("Sending message with ID: {MessageId} and ReplyTo: {ReplyTo}", request?.NMSMessageId, replyDest);
+            logger.LogInformation("Sending message with ID: {MessageId} and ReplyTo: {ReplyTo}", message?.NMSMessageId, replyDest);
             
             if (destination.Equals(settings.DefaultDestination))
             {
-                defaultProducer.Send(request);
+                defaultProducer.Send(message);
             }
             else
             {
                 using var messageProducer = GetProducer(destination);
-                messageProducer.Send(request);
+                messageProducer.Send(message);
                 messageProducer.Close();
             }
             
@@ -194,17 +204,7 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
             logger.LogInformation("Received message with ID: {MessageId}", reply?.NMSMessageId);
             var textReply = (reply as ITextMessage)?.Text;
             logger.LogInformation("Received message with text: {Reply}", textReply);
-
-            if (!string.IsNullOrEmpty(textReply))
-            {
-                return Task.FromResult(textReply);
-            }
-            else
-            {
-                //eventually throw on no reply
-            }
-            return Task.FromResult(string.Empty);
-
+            return Task.FromResult(reply as TOut);
         }
         catch (Exception e)
         {
@@ -218,7 +218,7 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
             {
                 var temporaryQueue = (replyDest as ITemporaryQueue);
                 temporaryQueue?.Delete();
-                logger.LogInformation("temp queue {TempQueue} deleted", temporaryQueue?.QueueName);
+                logger.LogInformation("temp destination {TempQueue} deleted", temporaryQueue?.QueueName);
             }
         }
     }
