@@ -8,6 +8,8 @@ This package contains useful implementations of message bus services based on ap
 
 ## Usage
 
+**Attention**: This package references the **NMS api only**. In order to connect to a message bus you will need to include the necessary package and eventually related config files to your project (like [ActiveMQ](https://www.nuget.org/packages/Apache.NMS.ActiveMQ) or [AMQP](https://www.nuget.org/packages/Apache.NMS.AMQP) and so on ...)
+
 ### With Message Bus Manager
 The message bus manager can be used for managing multiple instances of message bus  on different locations.
 
