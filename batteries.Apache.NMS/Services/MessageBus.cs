@@ -56,6 +56,9 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
         GC.SuppressFinalize(this);
     }
 
+    public IConnection Connection => connection;
+    public ISession Session => session;
+    
     private readonly ILogger<MessageBus> logger;
     private readonly MessageBusSessionSettings settings;
     private IConnection connection;
@@ -127,6 +130,8 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
     {
         try
         {
+            logger.LogDebug("Sending message to {Destination} with content {@Request}", destination, message);
+            
             if (destination.Equals(settings.DefaultDestination))
             {
                 defaultProducer.Send(message);
@@ -187,7 +192,8 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
             
             using var consumer = session.CreateConsumer(replyDest);
             
-            logger.LogInformation("Sending message with ID: {MessageId} and ReplyTo: {ReplyTo}", message?.NMSMessageId, replyDest);
+            logger.LogInformation("Sending request message to {Destination} with ID: {MessageId} and ReplyTo: {ReplyTo}", destination, message?.NMSMessageId, replyDest);
+            logger.LogDebug("Sending request to {Destination} with ReplyTo: {ReplyTo} and content {@Request}", destination, replyDest, message);
             
             if (destination.Equals(settings.DefaultDestination))
             {
@@ -201,9 +207,8 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
             }
             
             var reply = consumer.Receive(settings.RequestTimeout);
-            logger.LogInformation("Received message with ID: {MessageId}", reply?.NMSMessageId);
-            var textReply = (reply as ITextMessage)?.Text;
-            logger.LogInformation("Received message with text: {Reply}", textReply);
+            logger.LogInformation("Received reply with ID: {MessageId} on {ReplyDestination}", reply?.NMSMessageId, replyDest);
+            logger.LogDebug("Received reply from {Destination} with content {@Reply}", replyDest, reply);
             return Task.FromResult(reply as TOut);
         }
         catch (Exception e)

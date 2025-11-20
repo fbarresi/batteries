@@ -15,5 +15,7 @@ namespace batteries.Apache.NMS.Interfaces
         IObservable<T?> Consume<T>(string destination, string selector) where T : class, IMessage;
         bool IsRunning { get; }
         IObservable<bool> Connected { get; }
+        IConnection Connection { get; }
+        ISession Session { get; }
     }
 }
