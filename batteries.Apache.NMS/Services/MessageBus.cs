@@ -208,8 +208,18 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
             }
             
             var reply = consumer.Receive(settings.RequestTimeout);
-            logger.LogInformation("Received reply with ID: {MessageId} on {ReplyDestination}", reply?.NMSMessageId, replyDest);
-            logger.LogDebug("Received reply from {Destination} with content {@Reply}", replyDest, reply);
+            if (reply == null)
+            {
+                logger.LogInformation("Received no message on {ReplyDestination} after {Timeout}", replyDest, settings.RequestTimeout);
+            }
+            else
+            {
+                logger.LogInformation(
+                    "Received reply with ID: {MessageId} and CorrelationID: {CorrelationId} on {ReplyDestination}",
+                    reply?.NMSMessageId, message?.NMSCorrelationID, replyDest);
+                logger.LogDebug("Received reply from {Destination} with content {@Reply}", replyDest, reply);
+            }
+
             return Task.FromResult(reply as TOut);
         }
         catch (Exception e)
