@@ -167,6 +167,7 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
             }
         }
         request.NMSMessageId = Guid.NewGuid().ToString();
+        request.NMSCorrelationID = Guid.NewGuid().ToString();
 
         return request;
     }
@@ -192,7 +193,7 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
             
             using var consumer = session.CreateConsumer(replyDest);
             
-            logger.LogInformation("Sending request message to {Destination} with ID: {MessageId} and ReplyTo: {ReplyTo}", destination, message?.NMSMessageId, replyDest);
+            logger.LogInformation("Sending request message to {Destination} with ID: {MessageId}, CorrelationID: {CorrelationId} and ReplyTo: {ReplyTo}", destination, message?.NMSMessageId, message?.NMSCorrelationID, replyDest);
             logger.LogDebug("Sending request to {Destination} with ReplyTo: {ReplyTo} and content {@Request}", destination, replyDest, message);
             
             if (destination.Equals(settings.DefaultDestination))
