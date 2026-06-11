@@ -146,7 +146,8 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
         catch (Exception e)
         {
             logger.LogError(e, "Error while sending message to {Destination}", destination);
-            reconnectSubject.OnNext(Unit.Default);
+            if(settings.ReconnectOnException)
+                reconnectSubject.OnNext(Unit.Default);
             throw;
         }
         return Task.FromResult(true);
@@ -225,7 +226,8 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
         catch (Exception e)
         {
             logger.LogError(e, "Error while sending JMS message");
-            reconnectSubject.OnNext(Unit.Default);
+            if(settings.ReconnectOnException)
+                reconnectSubject.OnNext(Unit.Default);
             throw;
         }
         finally
@@ -256,7 +258,8 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
                 .Repeat()
                 .Subscribe(obs.OnNext!, e =>
                 {
-                    reconnectSubject.OnNext(Unit.Default);
+                    if(settings.ReconnectOnException)
+                        reconnectSubject.OnNext(Unit.Default);
                     obs.OnError(e);
                 }, obs.OnCompleted)
                 .AddDisposableTo(disposables);

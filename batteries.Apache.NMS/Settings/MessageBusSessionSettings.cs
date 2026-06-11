@@ -12,5 +12,6 @@ namespace batteries.Apache.NMS.Settings
         /// </summary>
         public int DeliveryMode { get; set; } = 0;
         public TimeSpan RequestTimeout { get; set; } = TimeSpan.FromSeconds(5);
+        public bool ReconnectOnException { get; set; }
     }
 }
