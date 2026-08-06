@@ -16,6 +16,6 @@ namespace batteries.Apache.NMS.Interfaces
         bool IsRunning { get; }
         IObservable<bool> Connected { get; }
         IConnection Connection { get; }
-        ISession Session { get; }
+        ISession CreateSession();
     }
 }

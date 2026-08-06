@@ -43,8 +43,6 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
 
     public override Task StopAsync(CancellationToken cancellationToken)
     {
-        defaultProducer?.Close();
-        session?.Close();
         connection?.Stop();
 
         return base.StopAsync(cancellationToken);
@@ -57,13 +55,10 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
     }
 
     public IConnection Connection => connection;
-    public ISession Session => session;
     
     private readonly ILogger<MessageBus> logger;
     private readonly MessageBusSessionSettings settings;
     private IConnection connection;
-    private ISession session;
-    private IMessageProducer defaultProducer;
     private readonly Subject<Unit> reconnectSubject = new();
     private readonly CompositeDisposable disposables = new();
     private readonly BehaviorSubject<bool> connectionSubject = new(false);
@@ -87,10 +82,7 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
             var factory = new NMSConnectionFactory(settings.ServerUrl);
             connection = factory.CreateConnection(settings.Username, settings.Password);
             connection.AddDisposableTo(disposables);
-            session = connection.CreateSession();
-            session.AddDisposableTo(disposables);
 
-            CreateDefaultProducer();
             connection.Start();
             logger.LogInformation("Connection for message bus {Name} started!", settings.Name);
             connectionSubject.OnNext(true);
@@ -102,46 +94,38 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
         }
     }
 
-    private void CreateDefaultProducer()
+    public ISession CreateSession()
     {
-        if (!string.IsNullOrEmpty(settings.DefaultDestination))
-        {
-            var destination = SessionUtil.GetDestination(session, settings.DefaultDestination);
-            logger.LogInformation("Destination: {Destination}", settings.DefaultDestination);
-
-            defaultProducer = session.CreateProducer(destination);
-            defaultProducer.DeliveryMode = (MsgDeliveryMode)settings.DeliveryMode;
-            defaultProducer.RequestTimeout = settings.RequestTimeout;
-            defaultProducer.AddDisposableTo(disposables);
-        }
+        var session = connection.CreateSession();
+        return session;
     }
 
     public Task Send(string destination, string message)
     {
         return Send(destination, message, null);
     }
-    public Task Send(string destination, string message, IDictionary<string, string>? properties)
+    public async Task Send(string destination, string message, IDictionary<string, string>? properties)
     {
-        var request = CreateTextMessage(message, properties);
-        return Send(destination, request);
+        using var session = CreateSession();
+        var request = CreateTextMessage(session, message, properties);
+        await SendAsync(session, destination, request);
     }
 
-    public Task Send<T>(string destination, T message) where T : class, IMessage
+    public async Task Send<T>(string destination, T message) where T : class, IMessage
+    {
+        using var session = CreateSession();
+        await SendAsync(session, destination, message);
+    }
+
+    private Task SendAsync<T>(ISession session, string destination, T message) where T : class, IMessage
     {
         try
         {
             logger.LogDebug("Sending message to {Destination} with content {@Request}", destination, message);
             
-            if (destination.Equals(settings.DefaultDestination))
-            {
-                defaultProducer.Send(message);
-            }
-            else
-            {
-                using var messageProducer = GetProducer(destination);
-                messageProducer.Send(message);
-                messageProducer.Close();
-            }
+            using var messageProducer = GetProducer(session, destination);
+            messageProducer.Send(message);
+            messageProducer.Close();
         }
         catch (Exception e)
         {
@@ -153,7 +137,7 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
         return Task.FromResult(true);
     }
 
-    private ITextMessage CreateTextMessage(string message, IDictionary<string, string>? properties)
+    private ITextMessage CreateTextMessage(ISession session, string message, IDictionary<string, string>? properties)
     {
         var request = session.CreateTextMessage(message);
 
@@ -179,15 +163,21 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
     }
     public async Task<string?> Request(string destination, string message, IDictionary<string, string>? properties, bool useTempDestination, string replyDestination)
     {
-        
-        var request = CreateTextMessage(message, properties);
-        var reply = await Request<ITextMessage, ITextMessage>(destination, request, useTempDestination, replyDestination);
+        using var session = CreateSession();
+        var request = CreateTextMessage(session, message, properties);
+        var reply = await RequestAsync<ITextMessage, ITextMessage>(session, destination, request, useTempDestination, replyDestination);
         return reply?.Text;
     }
 
-    public Task<TOut?> Request<TIn, TOut>(string destination, TIn message, bool useTempDestination, string replyDestination) where TIn : class, IMessage where TOut : class, IMessage
+    public Task<TOut?> Request<TIn, TOut>(string destination, TIn message, bool useTempDestination,
+        string replyDestination) where TIn : class, IMessage where TOut : class, IMessage
     {
-        using var replyDest = GetDestination(useTempDestination, replyDestination);
+        using var session = CreateSession();
+        return RequestAsync<TIn, TOut>(session, destination, message, useTempDestination, replyDestination);
+    }
+    private Task<TOut?> RequestAsync<TIn, TOut>(ISession session, string destination, TIn message, bool useTempDestination, string replyDestination) where TIn : class, IMessage where TOut : class, IMessage
+    {
+        using var replyDest = GetDestination(session, useTempDestination, replyDestination);
         try
         {
             message.NMSReplyTo = replyDest;
@@ -197,16 +187,9 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
             logger.LogInformation("Sending request message to {Destination} with ID: {MessageId}, CorrelationID: {CorrelationId} and ReplyTo: {ReplyTo}", destination, message?.NMSMessageId, message?.NMSCorrelationID, replyDest);
             logger.LogDebug("Sending request to {Destination} with ReplyTo: {ReplyTo} and content {@Request}", destination, replyDest, message);
             
-            if (destination.Equals(settings.DefaultDestination))
-            {
-                defaultProducer.Send(message);
-            }
-            else
-            {
-                using var messageProducer = GetProducer(destination);
-                messageProducer.Send(message);
-                messageProducer.Close();
-            }
+            using var messageProducer = GetProducer(session, destination);
+            messageProducer.Send(message);
+            messageProducer.Close();
             
             var reply = consumer.Receive(settings.RequestTimeout);
             if (reply == null)
@@ -246,7 +229,8 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
         return Observable.Create<T>(obs =>
         {
             var disposable = new CompositeDisposable();
-            
+            var session = CreateSession();
+            session.AddDisposableTo(disposable);
             var dest = SessionUtil.GetDestination(session, destination);
             dest.AddDisposableTo(disposable);
             var consumer = session.CreateConsumer(dest, selector);
@@ -273,7 +257,7 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
         return Consume<T>(destination, string.Empty);
     }
 
-    private IDestination GetDestination(bool useTemp, string destination)
+    private IDestination GetDestination(ISession session, bool useTemp, string destination)
     {
         if (useTemp)
         {
@@ -281,7 +265,7 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
         }
         return SessionUtil.GetDestination(session, destination);
     }
-    private IMessageProducer GetProducer(string destination)
+    private IMessageProducer GetProducer(ISession session, string destination)
     {
         var dest = SessionUtil.GetDestination(session, destination);
         logger.LogInformation("Creating producer for: {Destination}", destination);

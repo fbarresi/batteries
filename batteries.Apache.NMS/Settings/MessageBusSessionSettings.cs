@@ -5,7 +5,6 @@ namespace batteries.Apache.NMS.Settings
         public string ServerUrl { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
-        public string DefaultDestination { get; set; }
         public string Name { get; set; }
         /// <summary>
         /// Persistent = 0 ; NonPersistent = 1
