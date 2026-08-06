@@ -34,8 +34,7 @@ Here is how to use it:
         "Name": "test",
         "ServerUrl":"activemq:tcp://localhost:61616?retryInterval=1000&retryIntervalMultiplier=1.5&maxRetryInterval=60000&reconnectAttempts=1000",
         "Username": "artemis",
-        "Password": "artemis",
-        "DefaultDestination": "topic://fancytopic"
+        "Password": "artemis"
       }
     ],
     "Destinations": {
@@ -89,8 +88,7 @@ Here is how to use it:
         "Name": "test",
         "ServerUrl":"activemq:tcp://localhost:61616?retryInterval=1000&retryIntervalMultiplier=1.5&maxRetryInterval=60000&reconnectAttempts=1000",
         "Username": "artemis",
-        "Password": "artemis",
-        "DefaultDestination": "topic://fancytopic"
+        "Password": "artemis"
       }
    
    ````
