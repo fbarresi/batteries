@@ -9,11 +9,14 @@
             {
                 case TypeCode.Boolean:
                     return (T)Convert.ChangeType(random.Next() % 2 == 0, type);
-                case TypeCode.Char:
                 case TypeCode.SByte:
+                    return (T)Convert.ChangeType(random.Next(SByte.MaxValue), type);
+                case TypeCode.Char:
                 case TypeCode.Byte:
+                    return (T)Convert.ChangeType(random.Next(Byte.MaxValue), type);
                 case TypeCode.Int16:
                 case TypeCode.UInt16:
+                    return (T)Convert.ChangeType(random.Next(Int16.MaxValue), type);
                 case TypeCode.Int32:
                 case TypeCode.UInt32:
                 case TypeCode.Int64:
