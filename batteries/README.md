@@ -1,6 +1,7 @@
 ﻿# batteries ![logo](https://raw.githubusercontent.com/gammasoft/fatcow/refs/heads/master/32x32/battery_charge.png)
 
-[![NuGet Version](https://img.shields.io/nuget/vpre/batteries)](https://www.nuget.org/packages/batteries/)
+[![NuGet Version](https://img.shields.io/nuget/vpre/batteries)](https://www.nuget.org/packages/batteries/) ![Static Badge](https://img.shields.io/badge/coverage-100%25-green)
+
 
 This is a personal and opinionated collection of packages with useful code.
 
