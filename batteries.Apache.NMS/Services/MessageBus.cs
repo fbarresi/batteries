@@ -182,8 +182,13 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
         try
         {
             message.NMSReplyTo = replyDest;
-            
-            using var consumer = session.CreateConsumer(replyDest);
+            if(string.IsNullOrEmpty(message.NMSCorrelationID))
+            {
+                message.NMSCorrelationID = Guid.NewGuid().ToString();
+            }
+            using var consumer = useTempDestination ? 
+                session.CreateConsumer(replyDest) : 
+                session.CreateConsumer(replyDest, $"JMSCorrelationID = '{message.NMSCorrelationID}'");
             
             logger.LogInformation("Sending request message to {Destination} with ID: {MessageId}, CorrelationID: {CorrelationId} and ReplyTo: {ReplyTo}", destination, message?.NMSMessageId, message?.NMSCorrelationID, replyDest);
             logger.LogDebug("Sending request to {Destination} with ReplyTo: {ReplyTo} and content {@Request}", destination, replyDest, message);
