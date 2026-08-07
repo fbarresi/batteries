@@ -108,16 +108,16 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
     {
         using var session = CreateSession();
         var request = CreateTextMessage(session, message, properties);
-        await SendAsync(session, destination, request);
+        await Send(session, destination, request);
     }
 
     public async Task Send<T>(string destination, T message) where T : class, IMessage
     {
         using var session = CreateSession();
-        await SendAsync(session, destination, message);
+        await Send(session, destination, message);
     }
 
-    private Task SendAsync<T>(ISession session, string destination, T message) where T : class, IMessage
+    public Task Send<T>(ISession session, string destination, T message) where T : class, IMessage
     {
         try
         {
@@ -137,7 +137,7 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
         return Task.FromResult(true);
     }
 
-    private ITextMessage CreateTextMessage(ISession session, string message, IDictionary<string, string>? properties)
+    public ITextMessage CreateTextMessage(ISession session, string message, IDictionary<string, string>? properties)
     {
         var request = session.CreateTextMessage(message);
 
@@ -165,7 +165,7 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
     {
         using var session = CreateSession();
         var request = CreateTextMessage(session, message, properties);
-        var reply = await RequestAsync<ITextMessage, ITextMessage>(session, destination, request, useTempDestination, replyDestination);
+        var reply = await Request<ITextMessage, ITextMessage>(session, destination, request, useTempDestination, replyDestination);
         return reply?.Text;
     }
 
@@ -173,9 +173,10 @@ public class MessageBus : BackgroundService, IMessageBus, IDisposable
         string replyDestination) where TIn : class, IMessage where TOut : class, IMessage
     {
         using var session = CreateSession();
-        return RequestAsync<TIn, TOut>(session, destination, message, useTempDestination, replyDestination);
+        return Request<TIn, TOut>(session, destination, message, useTempDestination, replyDestination);
     }
-    private Task<TOut?> RequestAsync<TIn, TOut>(ISession session, string destination, TIn message, bool useTempDestination, string replyDestination) where TIn : class, IMessage where TOut : class, IMessage
+    
+    public Task<TOut?> Request<TIn, TOut>(ISession session, string destination, TIn message, bool useTempDestination, string replyDestination) where TIn : class, IMessage where TOut : class, IMessage
     {
         using var replyDest = GetDestination(session, useTempDestination, replyDestination);
         try
