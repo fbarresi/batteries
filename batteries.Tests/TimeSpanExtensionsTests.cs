@@ -1,5 +1,5 @@
+using batteries.Extensions;
 using Shouldly;
-using TFU002.Interfaces.Extensions;
 
 namespace batteries.Tests;
 

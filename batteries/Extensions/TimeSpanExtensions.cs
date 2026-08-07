@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TFU002.Interfaces.Extensions
+﻿namespace batteries.Extensions
 {
     public static class TimeSpanExtensions
     {
